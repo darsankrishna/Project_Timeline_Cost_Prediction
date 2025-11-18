@@ -11,7 +11,7 @@ NUMERICAL = ['planned_days','planned_cost','material_cost_index','labour_cost_in
 def build_pipeline():
     ohe = OneHotEncoder(handle_unknown='ignore', sparse=False)
     preproc = ColumnTransformer([
-    ('cat', ohe, CATEGORICAL)
+         ('cat', ohe, CATEGORICAL)
     ], remainder='passthrough')
 
     clf = XGBClassifier(n_estimators=100, max_depth=4, use_label_encoder=False, eval_metric='logloss')
