@@ -1,4 +1,8 @@
 import numpy as np
+import pandas as pd
+from datetime import datetime, timedelta
+
+np.random.seed(42)
 N = 2000
 
 project_types = ['substation','overhead_line','underground_cable']
