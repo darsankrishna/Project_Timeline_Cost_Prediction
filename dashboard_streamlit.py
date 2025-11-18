@@ -19,27 +19,27 @@ material_avail = st.sidebar.selectbox('Material availability', ['good','ok','poo
 demand_supply_shock = st.sidebar.selectbox('Demand-supply shock', [0,1])
 
 if st.sidebar.button('Predict'):
-payload = {
-'project_type': project_type,
-'terrain': terrain,
-'planned_days': int(planned_days),
-'planned_cost': float(planned_cost),
-'material_cost_index': float(material_cost_index),
-'labour_cost_index': float(labour_cost_index),
-'vendor': vendor,
-'vendor_perf': float(vendor_perf),
-'weather_risk': int(weather_risk),
-'regulatory_delay_days': int(regulatory_delay_days),
-'material_avail': material_avail,
-'demand_supply_shock': int(demand_supply_shock)
-}
-res = requests.post('http://localhost:8000/predict_cost_overrun', json=payload)
-st.json(res.json())
+    payload = {
+      'project_type': project_type,
+      'terrain': terrain,
+      'planned_days': int(planned_days),
+      'planned_cost': float(planned_cost),
+      'material_cost_index': float(material_cost_index),
+      'labour_cost_index': float(labour_cost_index),
+      'vendor': vendor,
+      'vendor_perf': float(vendor_perf),
+      'weather_risk': int(weather_risk),
+      'regulatory_delay_days': int(regulatory_delay_days),
+      'material_avail': material_avail,
+      'demand_supply_shock': int(demand_supply_shock)
+    }
+    res = requests.post('http://localhost:8000/predict_cost_overrun', json=payload)
+    st.json(res.json())
 
 st.markdown('---')
 st.write('Sample dataset preview:')
 try:
-df = pd.read_csv('synthetic_projects.csv')
-st.dataframe(df.sample(5))
+    df = pd.read_csv('synthetic_projects.csv')
+    st.dataframe(df.sample(5))
 except Exception as e:
-st.write('No dataset found. Run `generate_synthetic_data.py` first.')
+    st.write('No dataset found. Run `generate_synthetic_data.py` first.')
