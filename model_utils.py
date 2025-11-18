@@ -9,7 +9,7 @@ NUMERICAL = ['planned_days','planned_cost','material_cost_index','labour_cost_in
 
 
 def build_pipeline():
-    ohe = OneHotEncoder(handle_unknown='ignore', sparse=False)
+    ohe = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
     preproc = ColumnTransformer([
          ('cat', ohe, CATEGORICAL)
     ], remainder='passthrough')
