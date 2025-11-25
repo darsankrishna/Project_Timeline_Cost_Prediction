@@ -12,14 +12,11 @@ class ProjectIn(BaseModel):
       terrain: str
       planned_days: int
       planned_cost: float
-      material_cost_index: float
-      labour_cost_index: float
+      regulatory_risk: str
+      season: str
       vendor: str
-      vendor_perf: float
-      weather_risk: int
-      regulatory_delay_days: int
-      material_avail: str
-      demand_supply_shock: int
+      vendor_rating: float
+      market_condition: str
 
 @app.post('/predict_cost_overrun')
 def predict_cost_overrun(payload: ProjectIn):

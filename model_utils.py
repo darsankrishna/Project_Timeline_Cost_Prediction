@@ -4,8 +4,8 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 
-CATEGORICAL = ['project_type','terrain','vendor','material_avail']
-NUMERICAL = ['planned_days','planned_cost','material_cost_index','labour_cost_index','vendor_perf','weather_risk','regulatory_delay_days','demand_supply_shock']
+CATEGORICAL = ['project_type','terrain','vendor','regulatory_risk','season','market_condition']
+NUMERICAL = ['planned_days','planned_cost','vendor_rating']
 
 
 def build_pipeline():
