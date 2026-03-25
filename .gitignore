@@ -1,0 +1,9 @@
+# Python cache/compiled artifacts
+__pycache__/
+*.py[cod]
+
+# ML model binaries (generated)
+artifacts/*.pkl
+
+# test/runtime logs
+*.log
