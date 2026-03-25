@@ -106,11 +106,15 @@ if submit_btn:
     }
     
     try:
-        res = requests.post('http://localhost:8000/predict_cost_overrun', json=payload)
+        res = requests.post('http://localhost:8000/predict', json=payload)
         if res.status_code == 200:
             result = res.json()
-            prob = result['probability']
-            is_overrun = result['predicted_overrun']
+            cost_prob = result['cost_overrun_probability']
+            cost_overrun = result['cost_overrun_predicted']
+            time_prob = result['time_overrun_probability']
+            time_overrun = result['time_overrun_predicted']
+            key_risk_factors = result.get('key_risk_factors', [])
+            vendor_info = result.get('vendor_info', {})
             
             # --- Results Display ---
             st.markdown("### 📊 Prediction Analysis")
@@ -118,11 +122,11 @@ if submit_btn:
             # Gauge Chart for Risk Probability
             fig_gauge = go.Figure(go.Indicator(
                 mode = "gauge+number",
-                value = prob * 100,
+                value = cost_prob * 100,
                 title = {'text': "Overrun Probability"},
                 gauge = {
                     'axis': {'range': [0, 100]},
-                    'bar': {'color': "#ef4444" if prob > 0.5 else "#22c55e"},
+                    'bar': {'color': "#ef4444" if cost_prob > 0.5 else "#22c55e"},
                     'steps': [
                         {'range': [0, 30], 'color': "rgba(34, 197, 94, 0.3)"},
                         {'range': [30, 70], 'color': "rgba(234, 179, 8, 0.3)"},
@@ -138,18 +142,29 @@ if submit_btn:
                 st.plotly_chart(fig_gauge, use_container_width=True)
                 
             with col_res2:
-                if is_overrun:
+                if cost_overrun or time_overrun:
                     st.error(f"🚨 **High Risk Detected**")
-                    st.markdown(f"This project has a **{prob*100:.1f}%** probability of exceeding its budget/timeline.")
-                    st.markdown("""
-                    **Key Risk Drivers:**
-                    - High Regulatory Risk
-                    - Volatile Market Conditions
-                    - Complex Terrain
-                    """)
+                    st.markdown(f"Cost overrun risk: **{cost_prob*100:.1f}%**\n\nTime overrun risk: **{time_prob*100:.1f}%**")
                 else:
                     st.success(f"✅ **Low Risk**")
-                    st.markdown(f"This project is likely to stay within limits (**{prob*100:.1f}%** risk).")
+                    st.markdown(f"This project is likely to stay within limits.\n\nCost risk: **{cost_prob*100:.1f}%** | Time risk: **{time_prob*100:.1f}%**")
+
+                st.markdown("#### Key Risk Factors")
+                for factor in (key_risk_factors or ['No key risk factors returned']):
+                    st.markdown(f"- {factor}")
+
+                st.markdown("#### Vendor Info")
+                if vendor_info:
+                    st.markdown(
+                        f"**Vendor:** `{vendor_info.get('vendor', vendor)}`  \n"
+                        f"**Rating:** {float(vendor_info.get('vendor_rating', vendor_rating)):.1f} "
+                        f"({vendor_info.get('vendor_rating_band', 'N/A')})  \n"
+                        f"**Cohort risk:** {str(vendor_info.get('vendor_cohort_risk', 'unknown')).title()}"
+                    )
+                    for note in vendor_info.get('notes', []):
+                        st.markdown(f"- {note}")
+                else:
+                    st.markdown("- Vendor insights unavailable.")
                     
         else:
             st.error("Error connecting to prediction service.")
