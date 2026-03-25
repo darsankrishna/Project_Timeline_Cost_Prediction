@@ -10,3 +10,4 @@ pyyaml
 joblib
 streamlit
 pydantic
+plotly
