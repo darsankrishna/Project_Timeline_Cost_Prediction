@@ -113,6 +113,8 @@ if submit_btn:
             cost_overrun = result['cost_overrun_predicted']
             time_prob = result['time_overrun_probability']
             time_overrun = result['time_overrun_predicted']
+            key_risk_factors = result.get('key_risk_factors', [])
+            vendor_info = result.get('vendor_info', {})
             
             # --- Results Display ---
             st.markdown("### 📊 Prediction Analysis")
@@ -143,15 +145,26 @@ if submit_btn:
                 if cost_overrun or time_overrun:
                     st.error(f"🚨 **High Risk Detected**")
                     st.markdown(f"Cost overrun risk: **{cost_prob*100:.1f}%**\n\nTime overrun risk: **{time_prob*100:.1f}%**")
-                    st.markdown("""
-                    **Key Risk Drivers:**
-                    - High Regulatory Risk
-                    - Volatile Market Conditions
-                    - Complex Terrain
-                    """)
                 else:
                     st.success(f"✅ **Low Risk**")
                     st.markdown(f"This project is likely to stay within limits.\n\nCost risk: **{cost_prob*100:.1f}%** | Time risk: **{time_prob*100:.1f}%**")
+
+                st.markdown("#### Key Risk Factors")
+                for factor in (key_risk_factors or ['No key risk factors returned']):
+                    st.markdown(f"- {factor}")
+
+                st.markdown("#### Vendor Info")
+                if vendor_info:
+                    st.markdown(
+                        f"**Vendor:** `{vendor_info.get('vendor', vendor)}`  \n"
+                        f"**Rating:** {float(vendor_info.get('vendor_rating', vendor_rating)):.1f} "
+                        f"({vendor_info.get('vendor_rating_band', 'N/A')})  \n"
+                        f"**Cohort risk:** {str(vendor_info.get('vendor_cohort_risk', 'unknown')).title()}"
+                    )
+                    for note in vendor_info.get('notes', []):
+                        st.markdown(f"- {note}")
+                else:
+                    st.markdown("- Vendor insights unavailable.")
                     
         else:
             st.error("Error connecting to prediction service.")

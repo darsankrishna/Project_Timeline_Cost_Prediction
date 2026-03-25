@@ -35,5 +35,5 @@ streamlit run dashboard_streamlit.py
 
 ## API Endpoints
 - `GET /health`
-- `POST /predict` (cost + timeline outputs)
-- `POST /predict_cost_overrun` (backward-compatible cost-only output)
+- `POST /predict` (cost + timeline outputs + `key_risk_factors` + `vendor_info`)
+- `POST /predict_cost_overrun` (backward-compatible cost-only output + `key_risk_factors` + `vendor_info`)

@@ -8,7 +8,7 @@ import pandas as pd
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from serve_model_fastapi import _load_models
+from serve_model_fastapi import ProjectIn, _load_models, _predict
 
 PROJECT_TYPES = ['substation', 'overhead_line', 'underground_cable']
 TERRAINS = ['plains', 'hilly', 'forest', 'urban']
@@ -49,6 +49,28 @@ def run_all_valid_cases() -> int:
     assert ((time_probs >= 0.0) & (time_probs <= 1.0)).all()
 
     return len(df)
+
+
+def test_predict_contains_non_blank_risk_factors_and_vendor_info():
+    payload = ProjectIn(
+        project_type='substation',
+        terrain='urban',
+        planned_days=220,
+        planned_cost=55_000_000.0,
+        regulatory_risk='Medium',
+        season='Winter',
+        vendor='vendor_12',
+        vendor_rating=3.6,
+        market_condition='Volatile',
+    )
+    result = _predict(payload)
+
+    assert 'key_risk_factors' in result
+    assert len(result['key_risk_factors']) > 0
+    assert all(str(x).strip() for x in result['key_risk_factors'])
+    assert 'vendor_info' in result
+    assert result['vendor_info']['vendor'] == 'vendor_12'
+    assert len(result['vendor_info']['notes']) > 0
 
 
 if __name__ == '__main__':
